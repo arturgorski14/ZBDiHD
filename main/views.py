@@ -6,7 +6,12 @@ from django.db.models import Avg
 
 
 def home(request):
-    all_movies = Movie.objects.all()
+    query = request.GET.get('title')
+    all_movies = None
+    if query:
+        all_movies = Movie.objects.filter(name__icontains=query)
+    else:
+        all_movies = Movie.objects.all()
 
     context = {
         'movies': all_movies
