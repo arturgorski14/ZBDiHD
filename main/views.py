@@ -15,7 +15,7 @@ def home(request):
 
 def detail(request, id):
     movie = Movie.objects.get(id=id)
-    reviews = Review.objects.filter(movie=id)
+    reviews = Review.objects.filter(movie=id).order_by('-comment')  # idk why '-comment' instead of 'comment'
 
     context = {
         'movie': movie,
@@ -108,3 +108,25 @@ def add_review(request, id):
     else:
         return redirect('accounts:login')
 
+
+# edit the review
+def edit_review(request, movie_id, review_id):
+    if request.user.is_authenticated:
+        movie = Movie.objects.get(id=movie_id)
+
+        review = Review.objects.get(movie=movie, id=review_id)
+
+        if request.user == review.user:
+            if request.method == 'POST':
+                form = ReviewForm(request.POST, instance=review)
+                if form.is_valid():
+                    data = form.save(commit=False)
+                    data.save()
+                    return redirect('main:detail', movie_id)
+            else:
+                form = ReviewForm(instance=review)
+            return render(request, 'main/editreview.html', {'form': form})
+        else:
+            return redirect('main:detail', movie_id)
+    else:
+        return redirect('accounts:login')
