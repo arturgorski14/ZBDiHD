@@ -6,3 +6,4 @@ from .models import *
 # P: pass1234
 
 admin.site.register(Movie)
+admin.site.register(Review)
