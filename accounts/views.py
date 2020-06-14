@@ -24,3 +24,30 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'accounts/register.html', {'form': form})
+
+
+# login
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # check the credentials
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('main:home')
+            else:
+                return render(request, 'accounts/login.html', {'error': 'Your account has beed disabled'})
+        else:
+            return render(request, 'accounts/login.html', {'error': 'Invalid Username or Password. Try Again.'})
+    return render(request, 'accounts/login.html')
+
+
+# logout user
+def logout_user(request):
+    logout(request)
+    print('Successful logout')
+    return redirect('accounts:login')
