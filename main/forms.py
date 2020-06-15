@@ -12,3 +12,9 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ('comment', 'rating')
+
+
+class GameForm(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = ('name', 'studio', 'platform', 'description', 'release_date', 'image')

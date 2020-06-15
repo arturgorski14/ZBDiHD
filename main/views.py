@@ -7,51 +7,51 @@ from django.db.models import Avg
 
 def home(request):
     query = request.GET.get('title')
-    all_movies = None
+    all_games = None
     if query:
-        all_movies = Movie.objects.filter(name__icontains=query)
+        all_games = Game.objects.filter(name__icontains=query)
     else:
-        all_movies = Movie.objects.all()
+        all_games = Game.objects.all()
 
     context = {
-        'movies': all_movies
+        'games': all_games
     }
 
     return render(request, 'main/index.html', context)
 
 
 def detail(request, id):
-    movie = Movie.objects.get(id=id)
-    reviews = Review.objects.filter(movie=id).order_by('-comment')  # idk why '-comment' instead of 'comment'
+    game = Game.objects.get(id=id)
+    # reviews = Review.objects.filter(movie=id).order_by('-comment')  # idk why '-comment' instead of 'comment'
 
-    average = reviews.aggregate(Avg('rating'))['rating__avg']
-    if average is None:
-        average = 0
-    average = round(average, 2)
+    # average = reviews.aggregate(Avg('rating'))['rating__avg']
+    # if average is None:
+    #     average = 0
+    # average = round(average, 2)
     context = {
-        'movie': movie,
-        'reviews': reviews,
-        'average': average
+        'game': game,
+        # 'reviews': reviews,
+        # 'average': average
     }
 
     return render(request, 'main/details.html', context)
 
 
-# add movies to the database
-def add_movies(request):
+# add games to the database
+def add_games(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
             if request.method == 'POST':
-                form = MovieForm(request.POST or None)
+                form = GameForm(request.POST or None)
 
                 if form.is_valid():
                     data = form.save(commit=False)
                     data.save()
                     return redirect('main:home')
             else:
-                form = MovieForm()
-            return render(request, 'main/addmovies.html', {'form': form,
-                                                           'controller': 'Add Movies'})
+                form = GameForm()
+            return render(request, 'main/addgames.html', {'form': form,
+                                                           'controller': 'Add Games'})
         # if they are not admin
         else:
             return redirect('main:home')
@@ -60,23 +60,23 @@ def add_movies(request):
     return redirect('accounts:login')
 
 
-# edit the movie
-def edit_movies(request, id):
+# edit the game
+def edit_games(request, id):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            movie = Movie.objects.get(id=id)
+            game = Game.objects.get(id=id)
 
             if request.method == 'POST':
-                form = MovieForm(request.POST or None, instance=movie)
+                form = GameForm(request.POST or None, instance=game)
 
                 if form.is_valid():
                     data = form.save(commit=False)
                     data.save()
                     return redirect('main:detail', id)
             else:
-                form = MovieForm(instance=movie)
-            return render(request, 'main/addmovies.html', {'form': form,
-                                                           'controller': 'Edit Movies'})
+                form = GameForm(instance=game)
+            return render(request, 'main/addgames.html', {'form': form,
+                                                           'controller': 'Edit Games'})
         # if they are not admin
         else:
             return redirect('main:home')
@@ -85,13 +85,13 @@ def edit_movies(request, id):
     return redirect('accounts:login')
 
 
-# delete movies
-def delete_movies(request, id):
+# delete games
+def delete_games(request, id):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            movie = Movie.objects.get(id=id)
+            game = Game.objects.get(id=id)
 
-            movie.delete()
+            game.delete()
             return redirect('main:home')
         # if they are not admin
         else:
@@ -103,7 +103,7 @@ def delete_movies(request, id):
 
 def add_review(request, id):
     if request.user.is_authenticated:
-        movie = Movie.objects.get(id=id)
+        game = Game.objects.get(id=id)
         if request.method == 'POST':
             form = ReviewForm(request.POST or None)
             if form.is_valid():
@@ -111,7 +111,7 @@ def add_review(request, id):
                 data.comment = request.POST['comment']
                 data.rating = request.POST['rating']
                 data.user = request.user
-                data.movie = movie
+                data.game = game
                 data.save()
                 return redirect('main:detail', id)
         else:
@@ -122,11 +122,11 @@ def add_review(request, id):
 
 
 # edit the review
-def edit_review(request, movie_id, review_id):
+def edit_review(request, game_id, review_id):
     if request.user.is_authenticated:
-        movie = Movie.objects.get(id=movie_id)
+        game = Game.objects.get(id=game_id)
 
-        review = Review.objects.get(movie=movie, id=review_id)
+        review = Review.objects.get(game=game, id=review_id)
 
         if request.user == review.user:
             if request.method == 'POST':
@@ -138,27 +138,27 @@ def edit_review(request, movie_id, review_id):
                         return render(request, 'main/editreview.html', {'error': error, 'form': form})
                     else:
                         data.save()
-                        return redirect('main:detail', movie_id)
+                        return redirect('main:detail', game_id)
             else:
                 form = ReviewForm(instance=review)
             return render(request, 'main/editreview.html', {'form': form})
         else:
-            return redirect('main:detail', movie_id)
+            return redirect('main:detail', game_id)
     else:
         return redirect('accounts:login')
 
 
 # delete the review
-def delete_review(request, movie_id, review_id):
+def delete_review(request, game_id, review_id):
     if request.user.is_authenticated:
-        movie = Movie.objects.get(id=movie_id)
+        game = Game.objects.get(id=game_id)
 
-        review = Review.objects.get(movie=movie, id=review_id)
+        review = Review.objects.get(game=game, id=review_id)
 
         if request.user == review.user:
             # grant permission to delete
             review.delete()
 
-        return redirect('main:detail', movie_id)
+        return redirect('main:detail', game_id)
     else:
         return redirect('accounts:login')
