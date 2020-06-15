@@ -22,16 +22,16 @@ def home(request):
 
 def detail(request, id):
     game = Game.objects.get(id=id)
-    # reviews = Review.objects.filter(movie=id).order_by('-comment')  # idk why '-comment' instead of 'comment'
+    reviews = ReviewG.objects.filter(game=id).order_by('-comment')  # idk why '-comment' instead of 'comment'
 
-    # average = reviews.aggregate(Avg('rating'))['rating__avg']
-    # if average is None:
-    #     average = 0
-    # average = round(average, 2)
+    average = reviews.aggregate(Avg('rating'))['rating__avg']
+    if average is None:
+        average = 0
+    average = round(average, 2)
     context = {
         'game': game,
-        # 'reviews': reviews,
-        # 'average': average
+        'reviews': reviews,
+        'average': average
     }
 
     return render(request, 'main/details.html', context)
@@ -126,7 +126,7 @@ def edit_review(request, game_id, review_id):
     if request.user.is_authenticated:
         game = Game.objects.get(id=game_id)
 
-        review = Review.objects.get(game=game, id=review_id)
+        review = ReviewG.objects.get(game=game, id=review_id)
 
         if request.user == review.user:
             if request.method == 'POST':
@@ -153,7 +153,7 @@ def delete_review(request, game_id, review_id):
     if request.user.is_authenticated:
         game = Game.objects.get(id=game_id)
 
-        review = Review.objects.get(game=game, id=review_id)
+        review = ReviewG.objects.get(game=game, id=review_id)
 
         if request.user == review.user:
             # grant permission to delete

@@ -40,3 +40,13 @@ class Game(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ReviewG(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=1000)
+    rating = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.user.username

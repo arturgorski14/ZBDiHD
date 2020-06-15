@@ -10,6 +10,6 @@ urlpatterns = [
     path('editgames/<int:id>/', views.edit_games, name='edit_games'),
     path('deletegames/<int:id>', views.delete_games, name='delete_game'),
     path('addreview/<int:id>', views.add_review, name='add_review'),
-    path('editreview/<int:movie_id>/<int:review_id>', views.edit_review, name='edit_review'),
-    path('deletereview/<int:movie_id>/<int:review_id>', views.delete_review, name='delete_review'),
+    path('editreview/<int:game_id>/<int:review_id>', views.edit_review, name='edit_review'),
+    path('deletereview/<int:game_id>/<int:review_id>', views.delete_review, name='delete_review'),
 ]
