@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'main',
     'accounts',
+    'djongo',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,8 +79,11 @@ WSGI_APPLICATION = 'movies.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'ZBDiHD',
+        'HOST': 'mongodb+srv://artur:projekty@zbdihd-5qpls.mongodb.net/<ZBDiHD>?retryWrites=true&w=majority',
+        'USER': 'artur',
+        'PASSWORD': 'projekty'
     }
 }
 
