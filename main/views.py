@@ -107,6 +107,14 @@ def add_review(request, id):
         if request.method == 'POST':
             form = ReviewForm(request.POST or None)
             if form.is_valid():
+                # check if user wrote review for this game
+                try:
+                    review_wrote_by_user = ReviewG.objects.get(game=game, user=request.user)
+                    print(review_wrote_by_user)
+                    print(review_wrote_by_user.id)
+                    review_wrote_by_user.delete()
+                except ReviewG.DoesNotExist:
+                    print('ReviewG.DoesNotExist')
                 data = form.save(commit=False)
                 data.comment = request.POST['comment']
                 data.rating = request.POST['rating']
