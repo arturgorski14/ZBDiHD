@@ -13,9 +13,10 @@
                 <div class="col-md-8">
                     <h3 class="text-center">{{ game.name }}</h3>
                     <p>{{ game.description }}</p>
-                    <h5>Director: {{ game.studio }}</h5>
-                    <h5>Cast: {{ game.platform }}</h5>
+                    <h5>Developer: {{ game.studio }}</h5>
+                    <h5>Platform: {{ game.platform }}</h5>
                     <h5>Rating: {{ average }}/10</h5>
+                    <h5><i>Release date: {{ game.release_date }}</i></h5>
 
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_superuser %}
@@ -59,7 +60,7 @@
                         <div class="col-md-3">
                             <h5 class="text-left">{{ review.user.username }}</h5>
                             <h5>{{ review.rating }}</h5>
-                            {% if request.user == review.user %}
+                            {% if request.user == review.user or request.user.is_superuser %}
                             <a href="{% url 'main:edit_review' game.id review.id %}">Edit</a>
                             <a href="{% url 'main:delete_review' game.id review.id %}" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
                             {% endif %}

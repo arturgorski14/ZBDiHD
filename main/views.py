@@ -136,7 +136,7 @@ def edit_review(request, game_id, review_id):
 
         review = ReviewG.objects.get(game=game, id=review_id)
 
-        if request.user == review.user:
+        if request.user == review.user or request.user.is_superuser:
             if request.method == 'POST':
                 form = ReviewForm(request.POST, instance=review)
                 if form.is_valid():
@@ -163,7 +163,7 @@ def delete_review(request, game_id, review_id):
 
         review = ReviewG.objects.get(game=game, id=review_id)
 
-        if request.user == review.user:
+        if request.user == review.user or request.user.is_superuser:
             # grant permission to delete
             review.delete()
 
